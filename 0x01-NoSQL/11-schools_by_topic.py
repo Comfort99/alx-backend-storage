@@ -10,7 +10,7 @@ def schools_by_topic(mongo_collection, topic):
     containing a specific topic
     """
     topic_filter = {
-        'topic': {
+        'topics': {
             '$elemMatch': {
                 '$eq': topic,
             }
