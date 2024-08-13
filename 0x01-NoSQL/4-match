@@ -1,0 +1,2 @@
+// filter the data 
+db.school.find({name: "Holberton school"}).forEach(printjson);
