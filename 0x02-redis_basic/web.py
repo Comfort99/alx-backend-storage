@@ -32,7 +32,7 @@ def data_cacher(method: Callable) -> Callable:
     return invoker
 
 
-@Cache_count
+@data_cacher
 def get_page(url: str) -> str:
     """ get the HTML """
     return requests.get(url).text
