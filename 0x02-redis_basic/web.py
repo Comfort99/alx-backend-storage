@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """ API """
 import requests
 import redis
@@ -16,6 +16,8 @@ def Cache_count(method: Callable) -> Callable:
     def invoke(url) -> str:
         """ Wrapper function for caching the output data"""
 
+        redis_store.incr(f"count:{url}")
+        
         """ check for cached content """
         cached_page = redis_store.get(f"cached:{url}")
         if cached_page:
@@ -24,12 +26,9 @@ def Cache_count(method: Callable) -> Callable:
         html_content = method(url)
         """ get the content """
 
+        redis_store.set(f"count:{url}", 0)
         redis_store.setex(f"cached:{url}", 10, html_content)
         """ Cache the content with expiration """
-
-        redis_store.incr(f"count:{url}")
-        """Incr the access count """
-
         return html_content
     return invoke
 
