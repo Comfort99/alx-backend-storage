@@ -54,7 +54,7 @@ def replay(method: Callable) -> Callable:
     outputs = redis_instance.lrange(outputs_key, 0, -1)
 
     """ Display the history of calls """
-    print(f"{fx_name} was called {len(inputs)} times")
+    print(f"{fx_name} was called {len(inputs)} times:")
     for input_args, output in zip(inputs, outputs):
         print(f"{fx_name}(*{input_args.decode('utf-8')})"
               f" -> {output.decode('utf-8')}")
