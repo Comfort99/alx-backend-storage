@@ -10,27 +10,26 @@ redis_store = redis.Redis()
 """ Redis client """
 
 
-def Cache_count(method: Callable) -> Callable:
-    """ Decorator to cache the page content and count URL accesses """
+def data_cacher(method: Callable) -> Callable:
+    """ Caches the output of fetched data.
+    """
     @wraps(method)
-    def invoke(url) -> str:
-        """ Wrapper function for caching the output data"""
+    def invoker(url) -> str:
+        """ The wrapper function for caching the output.
+        """
+        redis_store.incr(f'count:{url}')
 
-        redis_store.incr(f"count:{url}")
-        
-        """ check for cached content """
-        cached_page = redis_store.get(f"cached:{url}")
-        if cached_page:
-            return cached_page.decode('utf-8')
+        """get the cached content"""
+        result = redis_store.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
 
-        html_content = method(url)
-        """ get the content """
-
-        redis_store.set(f"count:{url}", 0)
-        redis_store.setex(f"cached:{url}", 10, html_content)
-        """ Cache the content with expiration """
-        return html_content
-    return invoke
+        """fetch the content if not cached"""
+        result = method(url)
+        redis_store.set(f'count:{url}', 0)
+        redis_store.setex(f'result:{url}', 10, result)
+        return result
+    return invoker
 
 
 @Cache_count
