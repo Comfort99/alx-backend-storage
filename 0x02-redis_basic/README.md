@@ -1,0 +1,1 @@
+Cache frequently used data
